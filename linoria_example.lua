@@ -1,5 +1,4 @@
-local LoadLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/ars240/Linoria-UI/main/linoria.lua"))
-if type(LoadLib) == "function" then LoadLib() end
+loadstring(game:HttpGet("https://raw.githubusercontent.com/ars240/Linoria-UI/main/linoria.lua"))()
 local Library = _G.Linoria
 local ThemeManager = Library.ThemeManager
 local SaveManager = Library.SaveManager
