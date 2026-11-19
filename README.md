@@ -2,14 +2,13 @@
 
 ## Loading
 ```lua
-local LoadLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/ars240/Linoria-UI/main/linoria.lua"))
-if type(LoadLib) == "function" then LoadLib() end
+loadstring(game:HttpGet("https://raw.githubusercontent.com/ars240/Linoria-UI/main/linoria.lua"))()
 local Library = _G.Linoria
 local ThemeManager = Library.ThemeManager
 local SaveManager = Library.SaveManager
 ```
 `Toggles` and `Options` are in `_G`.
-Matcha's `loadstring` drops return values, so `loadstring(...)()` gives `nil`. Use `_G.Linoria`.
+Matcha's `loadstring` doesn't pass back return values, so use `_G.Linoria`.
 Text above size 16 looks blocky (Matcha stretches one bitmap font).
 
 ## Customizing
