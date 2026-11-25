@@ -1771,6 +1771,7 @@ ThemeManager.BuiltInThemes = {
     ["Quartz"] = { 8, { FontColor = "ffffff", MainColor = "232330", AccentColor = "426e87", BackgroundColor = "1d1b26", OutlineColor = "27232f" } },
 }
 local ThemeFields = { "FontColor", "MainColor", "AccentColor", "BackgroundColor", "OutlineColor" }
+local FontNames = { "UI", "System", "SystemBold", "Monospace", "Pixel", "ProximaSoftBold", "Minecraft", "Fortnite" }
 function ThemeManager:SetLibrary(lib) self.Library = lib end
 function ThemeManager:SetFolder(f) self.Folder = f; self:BuildFolderTree() end
 function ThemeManager:BuildFolderTree()
@@ -1853,6 +1854,25 @@ function ThemeManager:CreateThemeManager(groupbox)
         Library:Notify(string.format("Set default theme to %q", tostring(Options.ThemeManager_ThemeList.Value)))
     end)
     Options.ThemeManager_ThemeList:OnChanged(function() self:ApplyTheme(Options.ThemeManager_ThemeList.Value) end)
+    local fonts, cur = {}, "UI"
+    for _, n in ipairs(FontNames) do
+        local ok, f = pcall(function() return Drawing.Fonts[n] end)
+        if ok and f ~= nil then
+            fonts[#fonts + 1] = n
+            if f == Library.Font then cur = n end
+        end
+    end
+    local okf, saved = pcall(readfile, self.Folder .. "/themes/font.txt")
+    if okf and saved and table.find(fonts, saved) then cur = saved end
+    groupbox:AddDropdown("ThemeManager_Font", { Text = "Font", Values = fonts, Default = cur })
+    Options.ThemeManager_Font:OnChanged(function()
+        local v = Options.ThemeManager_Font.Value
+        if not v then return end
+        Library:SetFont(v)
+        self:BuildFolderTree()
+        pcall(writefile, self.Folder .. "/themes/font.txt", v)
+    end)
+    Library:SetFont(cur)
     groupbox:AddDivider()
     groupbox:AddInput("ThemeManager_CustomThemeName", { Text = "Custom theme name" })
     groupbox:AddDropdown("ThemeManager_CustomThemeList", { Text = "Custom themes", Values = self:GetCustomThemes(), AllowNull = true, Default = 1 })
@@ -1919,7 +1939,7 @@ function SaveManager:SetLibrary(lib) self.Library = lib end
 function SaveManager:SetIgnoreIndexes(list) for _, k in ipairs(list) do self.Ignore[k] = true end end
 function SaveManager:IgnoreThemeSettings()
     self:SetIgnoreIndexes({ "BackgroundColor", "MainColor", "AccentColor", "OutlineColor", "FontColor",
-        "ThemeManager_ThemeList", "ThemeManager_CustomThemeList", "ThemeManager_CustomThemeName" })
+        "ThemeManager_ThemeList", "ThemeManager_CustomThemeList", "ThemeManager_CustomThemeName", "ThemeManager_Font" })
 end
 function SaveManager:SetFolder(f) self.Folder = f; self:BuildFolderTree() end
 function SaveManager:BuildFolderTree()
